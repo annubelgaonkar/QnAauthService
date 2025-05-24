@@ -10,22 +10,27 @@ import org.springframework.stereotype.Service;
 import dev.qna.qna_auth_service.model.User;
 
 @Service
-@RequiredArgsConstructor
 public class AuthService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JwtUtil jwtUtil;
 
+    public AuthService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder,
+                       JwtUtil jwtUtil) {
+        this.userRepository = userRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.jwtUtil = jwtUtil;
+    }
+
     public String register(AuthRequestDTO request) {
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             return "Username already exists";
         }
 
-        User user = User.builder()
-                .username(request.getUsername())
-                .passwordHash(bCryptPasswordEncoder.encode(request.getPassword()))
-                .build();
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setPasswordHash(bCryptPasswordEncoder.encode(request.getPassword()));
 
         userRepository.save(user);
         return "User registered";
