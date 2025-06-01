@@ -2,6 +2,7 @@ package dev.qna.qna_auth_service.controller;
 
 import dev.qna.qna_auth_service.dto.AuthRequestDTO;
 import dev.qna.qna_auth_service.dto.AuthResponseDTO;
+import dev.qna.qna_auth_service.dto.BaseResponseDTO;
 import dev.qna.qna_auth_service.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +24,8 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody AuthRequestDTO request) {
-        String response = authService.register(request);
+    public ResponseEntity<BaseResponseDTO> register(@RequestBody AuthRequestDTO request) {
+        BaseResponseDTO response = authService.register(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 

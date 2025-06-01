@@ -2,6 +2,7 @@ package dev.qna.qna_auth_service.service;
 
 import dev.qna.qna_auth_service.dto.AuthRequestDTO;
 import dev.qna.qna_auth_service.dto.AuthResponseDTO;
+import dev.qna.qna_auth_service.dto.BaseResponseDTO;
 import dev.qna.qna_auth_service.repository.UserRepository;
 import dev.qna.qna_auth_service.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -23,9 +24,9 @@ public class AuthService {
         this.jwtUtil = jwtUtil;
     }
 
-    public String register(AuthRequestDTO request) {
+    public BaseResponseDTO register(AuthRequestDTO request) {
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
-            return "Username already exists";
+            return new BaseResponseDTO(false, "Username already exists", request.getUsername());
         }
 
         User user = new User();
@@ -34,8 +35,9 @@ public class AuthService {
         user.setPasswordHash(bCryptPasswordEncoder.encode(request.getPassword()));
 
         userRepository.save(user);
-        return "User registered";
+        return new BaseResponseDTO(true, "User registered successfully", request.getUsername());
     }
+
 
 
     public AuthResponseDTO login(AuthRequestDTO request) {
