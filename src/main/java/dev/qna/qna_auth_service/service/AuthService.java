@@ -17,31 +17,35 @@ public class AuthService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JwtUtil jwtUtil;
 
-    public AuthService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder,
+    public AuthService(UserRepository userRepository,
+                       BCryptPasswordEncoder bCryptPasswordEncoder,
                        JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.jwtUtil = jwtUtil;
     }
 
-    public BaseResponseDTO register(AuthRequestDTO request) {
+    public BaseResponseDTO<AuthResponseDTO> register(AuthRequestDTO request) {
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
-            return new BaseResponseDTO(false, "Username already exists", request.getUsername());
+            return new BaseResponseDTO<>(false, "Username already exists", null);
+        }
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            return new BaseResponseDTO<>(false, "Email already registered", null);
         }
 
         User user = new User();
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setPasswordHash(bCryptPasswordEncoder.encode(request.getPassword()));
-
         userRepository.save(user);
-        return new BaseResponseDTO(true, "User registered successfully", request.getUsername());
+
+        String token = jwtUtil.generateToken(user.getUsername());
+        AuthResponseDTO responseDTO = new AuthResponseDTO(token);
+        return new BaseResponseDTO<>(true, "Username registered successfully", responseDTO);
     }
 
-
-
     public AuthResponseDTO login(AuthRequestDTO request) {
-        User user = userRepository.findByUsername(request.getUsername())
+        User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (!bCryptPasswordEncoder.matches(request.getPassword(), user.getPasswordHash())) {

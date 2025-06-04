@@ -8,9 +8,9 @@ import lombok.Setter;
 @Data
 @NoArgsConstructor
 public class BaseResponseDTO<T> {
-    boolean success;
-    String message;
-    T data;
+    private boolean success;
+    private String message;
+    private T data;
 
     public BaseResponseDTO(boolean success, String message, T data) {
         this.success = success;
