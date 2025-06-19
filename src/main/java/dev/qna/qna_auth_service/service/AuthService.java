@@ -26,9 +26,7 @@ public class AuthService {
     }
 
     public BaseResponseDTO<AuthResponseDTO> register(AuthRequestDTO request) {
-        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
-            return new BaseResponseDTO<>(false, "Username already exists", null);
-        }
+
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             return new BaseResponseDTO<>(false, "Email already registered", null);
         }
@@ -39,7 +37,7 @@ public class AuthService {
         user.setPasswordHash(bCryptPasswordEncoder.encode(request.getPassword()));
         userRepository.save(user);
 
-        String token = jwtUtil.generateToken(user.getUsername());
+        String token = jwtUtil.generateToken(user.getEmail());
         AuthResponseDTO responseDTO = new AuthResponseDTO(token);
         return new BaseResponseDTO<>(true, "Username registered successfully", responseDTO);
     }
@@ -52,7 +50,7 @@ public class AuthService {
             throw new RuntimeException("Invalid credentials");
         }
 
-        String token = jwtUtil.generateToken(user.getUsername());
+        String token = jwtUtil.generateToken(user.getEmail());
         return new AuthResponseDTO(token);
     }
 
