@@ -1,1 +1,1 @@
-This is an AuthService for my learning app which is AI based. While the app is still in progress, AuthService is completed and functional. Please login to https://www.learndaily.in/ to view the register/login page.
+This is an AuthService for my learning app which is AI based. Please login to https://www.learndaily.in/ to view the register/login page.
