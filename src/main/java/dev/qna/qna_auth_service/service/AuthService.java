@@ -48,7 +48,10 @@ public class AuthService {
 
     public AuthResponseDTO login(AuthRequestDTO request) {
 
-
+        if((request.getEmail() == null || request.getEmail().isBlank()) &&
+                ( (request.getPassword() == null || request.getPassword().isBlank()) )){
+            throw new BadRequestException("Please enter valid email and password");
+        }
         if (request.getEmail() == null || request.getEmail().isBlank()){
             throw new BadRequestException("Email must not be empty");
         }
