@@ -3,9 +3,13 @@ package dev.qna.qna_auth_service.service;
 import dev.qna.qna_auth_service.dto.AuthRequestDTO;
 import dev.qna.qna_auth_service.dto.AuthResponseDTO;
 import dev.qna.qna_auth_service.dto.BaseResponseDTO;
+import dev.qna.qna_auth_service.exception.BadRequestException;
+import dev.qna.qna_auth_service.exception.InvalidCredentialsException;
+import dev.qna.qna_auth_service.exception.UserNotFoundException;
 import dev.qna.qna_auth_service.repository.UserRepository;
 import dev.qna.qna_auth_service.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import dev.qna.qna_auth_service.model.User;
@@ -43,15 +47,26 @@ public class AuthService {
     }
 
     public AuthResponseDTO login(AuthRequestDTO request) {
+
+
+        if (request.getEmail() == null || request.getEmail().isBlank()){
+            throw new BadRequestException("Email must not be empty");
+        }
+
+        if(request.getPassword() == null || request.getPassword().isBlank()){
+            throw new BadRequestException("Password must not be empty");
+        }
+
+        // 1. Check if user exists with given email
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         if (!bCryptPasswordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
-            throw new RuntimeException("Invalid credentials");
+            throw new InvalidCredentialsException("Incorrect password");
         }
 
         String token = jwtUtil.generateToken(user.getEmail());
         return new AuthResponseDTO(token);
     }
-
 }
+

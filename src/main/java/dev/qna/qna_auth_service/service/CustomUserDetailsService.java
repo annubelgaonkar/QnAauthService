@@ -3,12 +3,10 @@ package dev.qna.qna_auth_service.service;
 
 import dev.qna.qna_auth_service.model.User;
 import dev.qna.qna_auth_service.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.Collections;
 
 @Service
