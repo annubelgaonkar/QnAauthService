@@ -8,26 +8,19 @@ import dev.qna.qna_auth_service.exception.InvalidCredentialsException;
 import dev.qna.qna_auth_service.exception.UserNotFoundException;
 import dev.qna.qna_auth_service.repository.UserRepository;
 import dev.qna.qna_auth_service.util.JwtUtil;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import dev.qna.qna_auth_service.model.User;
 
 @Service
+@AllArgsConstructor
 public class AuthService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JwtUtil jwtUtil;
-
-    public AuthService(UserRepository userRepository,
-                       BCryptPasswordEncoder bCryptPasswordEncoder,
-                       JwtUtil jwtUtil) {
-        this.userRepository = userRepository;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.jwtUtil = jwtUtil;
-    }
 
     public BaseResponseDTO<AuthResponseDTO> register(AuthRequestDTO request) {
 
